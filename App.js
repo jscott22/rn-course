@@ -1,0 +1,14 @@
+import { Navigation } from "react-native-navigation";
+
+import AuthScreen from "./src/screens/Auth";
+
+//Register Screens
+Navigation.registerComponent("awesome-places.AuthScreen", () => AuthScreen);
+
+//Start the App
+Navigation.startSingleScreenApp({
+  screen: {
+    screen: "awesome-places.AuthScreen",
+    title: "Login"
+  }
+});
