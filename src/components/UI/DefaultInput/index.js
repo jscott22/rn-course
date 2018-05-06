@@ -7,7 +7,7 @@ const StyledInput = styled.TextInput`
   border: 1px #eee;
   background: white;
   padding: 5px;
-  margin: 8px;
+  margin: 8px 0;
 `;
 
 const DefaultInput = props => (

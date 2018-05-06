@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, Text, Button, ImageBackground, Dimensions } from "react-native";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import startMainTabs from "../MainTabs/startMainTabs";
 
@@ -26,9 +26,53 @@ const StyledBackground = styled.ImageBackground`
   flex: 1;
 `;
 
+const PasswordWrapper = styled.View`
+  ${({ portrait }) => {
+    if (portrait)
+      return css`
+        width: 100%;
+      `;
+    return css`
+      width: 48%;
+    `;
+  }};
+`;
+
+const PasswordContainer = styled.View`
+  ${({ portrait }) => {
+    if (portrait)
+      return css`
+        flex-direction: column;
+        justify-content: flex-start;
+      `;
+    return css`
+      flex-direction: row;
+      justify-content: space-between;
+    `;
+  }};
+`;
+
 class AuthScreen extends PureComponent {
   static navigatorStyle = {
     navBarHidden: true
+  };
+
+  state = {
+    portrait: Dimensions.get("window").height > 500
+  };
+
+  componentDidMount = () => {
+    Dimensions.addEventListener("change", this.setViewMode);
+  };
+
+  componentWillUnmount = () => {
+    Dimensions.removeEventListener("change", this.setViewMode);
+  };
+
+  setViewMode = () => {
+    Dimensions.get("window").height > 500
+      ? this.setState({ portrait: true })
+      : this.setState({ portrait: false });
   };
 
   loginHander = () => {
@@ -45,6 +89,8 @@ class AuthScreen extends PureComponent {
       );
     }
 
+    const { portrait } = this.state;
+
     return (
       <StyledBackground source={backgroundImage}>
         <AuthContainer>
@@ -52,8 +98,14 @@ class AuthScreen extends PureComponent {
           <ButtonWithBackground>Switch To Login</ButtonWithBackground>
           <InputContainer>
             <DefaultInput placeholder="Email" />
-            <DefaultInput placeholder="Password" />
-            <DefaultInput placeholder="Confirm Password" />
+            <PasswordContainer portrait={portrait}>
+              <PasswordWrapper portrait={portrait}>
+                <DefaultInput placeholder="Password" />
+              </PasswordWrapper>
+              <PasswordWrapper portrait={portrait}>
+                <DefaultInput placeholder="Confirm Password" />
+              </PasswordWrapper>
+            </PasswordContainer>
           </InputContainer>
           <ButtonWithBackground title="Submit" onPress={this.loginHander}>
             Submit
