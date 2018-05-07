@@ -11,7 +11,11 @@ const StyledInput = styled.TextInput`
 `;
 
 const DefaultInput = props => (
-  <StyledInput underlineColorAndroid="transparent" {...props} />
+  <StyledInput
+    underlineColorAndroid="transparent"
+    {...props}
+    onChangeText={props.handleChangeText}
+  />
 );
 
 export default DefaultInput;

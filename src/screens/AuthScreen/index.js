@@ -9,48 +9,15 @@ import HeadingText from "../../components/UI/HeadingText";
 import MainText from "../../components/UI/MainText";
 import ButtonWithBackground from "../../components/UI/ButtonWithBackground";
 
+import AuthContainer from "./AuthContainer";
+import Background from "./Background";
+import InputContainer from "./InputContainer";
+import PasswordContainer from "./PasswordContainer";
+import PasswordWrapper from "./PasswordWrapper";
+
+import validate from "../../util/validation";
+
 import backgroundImage from "../../assets/background.jpg";
-
-const AuthContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
-const InputContainer = styled.View`
-  width: 80%;
-`;
-
-const StyledBackground = styled.ImageBackground`
-  width: 100%;
-  flex: 1;
-`;
-
-const PasswordWrapper = styled.View`
-  ${({ portrait }) => {
-    if (portrait)
-      return css`
-        width: 100%;
-      `;
-    return css`
-      width: 48%;
-    `;
-  }};
-`;
-
-const PasswordContainer = styled.View`
-  ${({ portrait }) => {
-    if (portrait)
-      return css`
-        flex-direction: column;
-        justify-content: flex-start;
-      `;
-    return css`
-      flex-direction: row;
-      justify-content: space-between;
-    `;
-  }};
-`;
 
 class AuthScreen extends PureComponent {
   static navigatorStyle = {
@@ -58,7 +25,30 @@ class AuthScreen extends PureComponent {
   };
 
   state = {
-    portrait: Dimensions.get("window").height > 500
+    portrait: Dimensions.get("window").height > 500,
+    controls: {
+      email: {
+        value: "",
+        valid: false,
+        validationRules: {
+          isEmail: true
+        }
+      },
+      password: {
+        value: "",
+        valid: false,
+        validationRules: {
+          minLength: 6
+        }
+      },
+      confirmPassword: {
+        value: "",
+        valid: false,
+        validationRules: {
+          equalTo: "password"
+        }
+      }
+    }
   };
 
   componentDidMount = () => {
@@ -79,6 +69,35 @@ class AuthScreen extends PureComponent {
     startMainTabs();
   };
 
+  updateInputState = (key, value) => {
+    let connectedValue = {};
+    if (this.state.controls[key].validationRules.equalTo) {
+      const equalControl = this.state.controls[key].validationRules.equalTo;
+      const equalValue = this.state.controls[equalControl].value;
+
+      connectedValue = {
+        ...connectedValue,
+        equalTo: equalValue
+      };
+    }
+
+    this.setState(prevState => ({
+      ...prevState,
+      controls: {
+        ...prevState.controls,
+        [key]: {
+          ...prevState.controls[key],
+          value,
+          valid: validate(
+            value,
+            prevState.controls[key].validationRules,
+            connectedValue
+          )
+        }
+      }
+    }));
+  };
+
   render() {
     let headingText = null;
     if (Dimensions.get("window").height > 500) {
@@ -89,21 +108,37 @@ class AuthScreen extends PureComponent {
       );
     }
 
-    const { portrait } = this.state;
+    const { portrait, controls } = this.state;
 
     return (
-      <StyledBackground source={backgroundImage}>
+      <Background source={backgroundImage}>
         <AuthContainer>
           {headingText}
           <ButtonWithBackground>Switch To Login</ButtonWithBackground>
           <InputContainer>
-            <DefaultInput placeholder="Email" />
+            <DefaultInput
+              placeholder="Email"
+              value={controls.email}
+              handleChangeText={value => this.updateInputState("email", value)}
+            />
             <PasswordContainer portrait={portrait}>
               <PasswordWrapper portrait={portrait}>
-                <DefaultInput placeholder="Password" />
+                <DefaultInput
+                  placeholder="Password"
+                  value={controls.password}
+                  handleChangeText={value =>
+                    this.updateInputState("password", value)
+                  }
+                />
               </PasswordWrapper>
               <PasswordWrapper portrait={portrait}>
-                <DefaultInput placeholder="Confirm Password" />
+                <DefaultInput
+                  placeholder="Confirm Password"
+                  value={controls.confirmPassword}
+                  handleChangeText={value =>
+                    this.updateInputState("confirmPassword", value)
+                  }
+                />
               </PasswordWrapper>
             </PasswordContainer>
           </InputContainer>
@@ -111,7 +146,7 @@ class AuthScreen extends PureComponent {
             Submit
           </ButtonWithBackground>
         </AuthContainer>
-      </StyledBackground>
+      </Background>
     );
   }
 }
