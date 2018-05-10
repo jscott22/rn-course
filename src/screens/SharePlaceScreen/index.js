@@ -14,6 +14,8 @@ import ButtonWithBackground from "../../components/UI/ButtonWithBackground";
 
 import { addPlace } from "../../store/actions/places";
 
+import validate from "../../util/validation";
+
 const Container = styled.View`
   flex: 1;
   align-items: center;
@@ -32,7 +34,16 @@ const ButtonContainer = styled.View`
 
 class SharePlaceScreen extends PureComponent {
   state = {
-    placeName: ""
+    controls: {
+      placeName: {
+        value: "",
+        valid: false,
+        touched: false,
+        validationRules: {
+          notEmpty: true
+        }
+      }
+    }
   };
 
   componentDidMount() {
@@ -49,19 +60,33 @@ class SharePlaceScreen extends PureComponent {
     }
   };
 
-  handlePlaceNameChange = val => {
-    this.setState({
-      placeName: val
-    });
+  handlePlaceNameChange = value => {
+    console.log(value);
+    this.setState(prevState => ({
+      controls: {
+        ...prevState.controls,
+        placeName: {
+          ...prevState.controls.placeName,
+          value,
+          valid: validate(value, prevState.controls.placeName.validationRules),
+          touched: true
+        }
+      }
+    }));
   };
 
   handlePlaceSubmit = () => {
-    if (this.state.placeName.trim() === "") {
-      return;
-    }
-
-    this.props.addPlace(this.state.placeName);
-    this.setState({ placeName: "" });
+    this.props.addPlace(this.state.controls.placeName.value);
+    this.setState(prevState => ({
+      controls: {
+        placeName: {
+          ...prevState.controls.placeName,
+          value: "",
+          valid: false,
+          touched: false
+        }
+      }
+    }));
   };
 
   render() {
@@ -74,11 +99,14 @@ class SharePlaceScreen extends PureComponent {
           <PickImage />
           <PickLocation />
           <PlaceInput
-            value={this.state.placeName}
-            onChangeText={this.handlePlaceNameChange}
+            placeData={this.state.controls.placeName}
+            handleChangeText={this.handlePlaceNameChange}
           />
           <ButtonContainer>
-            <ButtonWithBackground onPress={this.handlePlaceSubmit}>
+            <ButtonWithBackground
+              onPress={this.handlePlaceSubmit}
+              disabled={!this.state.controls.placeName.valid}
+            >
               Share!
             </ButtonWithBackground>
           </ButtonContainer>

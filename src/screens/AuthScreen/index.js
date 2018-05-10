@@ -1,6 +1,17 @@
 import React, { PureComponent } from "react";
-import { View, Text, Button, ImageBackground, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  ImageBackground,
+  Dimensions,
+  Keyboard,
+  TouchableWithoutFeedback
+} from "react-native";
 import styled, { css } from "styled-components";
+import { connect } from "react-redux";
+
+import { tryAuth } from "../../store/actions";
 
 import startMainTabs from "../MainTabs/startMainTabs";
 
@@ -26,27 +37,31 @@ class AuthScreen extends PureComponent {
 
   state = {
     portrait: Dimensions.get("window").height > 500,
+    authMode: "login",
     controls: {
       email: {
         value: "",
         valid: false,
         validationRules: {
           isEmail: true
-        }
+        },
+        touched: false
       },
       password: {
         value: "",
         valid: false,
         validationRules: {
           minLength: 6
-        }
+        },
+        touched: false
       },
       confirmPassword: {
         value: "",
         valid: false,
         validationRules: {
           equalTo: "password"
-        }
+        },
+        touched: false
       }
     }
   };
@@ -65,7 +80,20 @@ class AuthScreen extends PureComponent {
       : this.setState({ portrait: false });
   };
 
-  loginHander = () => {
+  switchAuthMode = () => {
+    this.setState(prevState => {
+      return {
+        authMode: prevState.authMode === "login" ? "signUp" : "login"
+      };
+    });
+  };
+
+  loginHandler = () => {
+    const authData = {
+      email: this.state.controls.email.value,
+      password: this.state.controls.password.value
+    };
+    this.props.tryAuth(authData);
     startMainTabs();
   };
 
@@ -82,7 +110,6 @@ class AuthScreen extends PureComponent {
     }
 
     this.setState(prevState => ({
-      ...prevState,
       controls: {
         ...prevState.controls,
         [key]: {
@@ -92,7 +119,8 @@ class AuthScreen extends PureComponent {
             value,
             prevState.controls[key].validationRules,
             connectedValue
-          )
+          ),
+          touched: true
         }
       }
     }));
@@ -108,47 +136,81 @@ class AuthScreen extends PureComponent {
       );
     }
 
-    const { portrait, controls } = this.state;
+    const { portrait, controls, authMode } = this.state;
 
     return (
       <Background source={backgroundImage}>
-        <AuthContainer>
-          {headingText}
-          <ButtonWithBackground>Switch To Login</ButtonWithBackground>
-          <InputContainer>
-            <DefaultInput
-              placeholder="Email"
-              value={controls.email}
-              handleChangeText={value => this.updateInputState("email", value)}
-            />
-            <PasswordContainer portrait={portrait}>
-              <PasswordWrapper portrait={portrait}>
-                <DefaultInput
-                  placeholder="Password"
-                  value={controls.password}
-                  handleChangeText={value =>
-                    this.updateInputState("password", value)
-                  }
-                />
-              </PasswordWrapper>
-              <PasswordWrapper portrait={portrait}>
-                <DefaultInput
-                  placeholder="Confirm Password"
-                  value={controls.confirmPassword}
-                  handleChangeText={value =>
-                    this.updateInputState("confirmPassword", value)
-                  }
-                />
-              </PasswordWrapper>
-            </PasswordContainer>
-          </InputContainer>
-          <ButtonWithBackground title="Submit" onPress={this.loginHander}>
-            Submit
-          </ButtonWithBackground>
-        </AuthContainer>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <AuthContainer behavior="padding">
+            {headingText}
+            <ButtonWithBackground onPress={this.switchAuthMode}>
+              {authMode === "signUp" ? "Switch to Login" : "Switch to Sign Up"}
+            </ButtonWithBackground>
+            <InputContainer>
+              <DefaultInput
+                placeholder="Email"
+                value={controls.email.value}
+                handleChangeText={value =>
+                  this.updateInputState("email", value)
+                }
+                invalid={!controls.email.valid && controls.email.touched}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+              />
+              <PasswordContainer portrait={portrait}>
+                <PasswordWrapper portrait={portrait} authMode={authMode}>
+                  <DefaultInput
+                    placeholder="Password"
+                    value={controls.password.value}
+                    handleChangeText={value =>
+                      this.updateInputState("password", value)
+                    }
+                    invalid={
+                      !controls.password.valid && controls.password.touched
+                    }
+                    secureTextEntry
+                  />
+                </PasswordWrapper>
+                {authMode === "signUp" ? (
+                  <PasswordWrapper portrait={portrait} authMode={authMode}>
+                    <DefaultInput
+                      placeholder="Confirm Password"
+                      value={controls.confirmPassword.value}
+                      handleChangeText={value =>
+                        this.updateInputState("confirmPassword", value)
+                      }
+                      invalid={
+                        !controls.confirmPassword.valid &&
+                        controls.confirmPassword.touched
+                      }
+                      secureTextEntry
+                    />
+                  </PasswordWrapper>
+                ) : null}
+              </PasswordContainer>
+            </InputContainer>
+            <ButtonWithBackground
+              title="Submit"
+              onPress={this.loginHandler}
+              disabled={
+                !this.state.controls.email.valid ||
+                !this.state.controls.password.valid ||
+                (!this.state.controls.confirmPassword.valid &&
+                  this.state.authMode === "signUp")
+              }
+            >
+              Submit
+            </ButtonWithBackground>
+          </AuthContainer>
+        </TouchableWithoutFeedback>
       </Background>
     );
   }
 }
 
-export default AuthScreen;
+const actions = {
+  tryAuth
+};
+
+export default connect(null, actions)(AuthScreen);

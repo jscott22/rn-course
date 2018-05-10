@@ -11,6 +11,8 @@ const equalToValidator = (val, checkVal) => {
   return val === checkVal;
 };
 
+const notEmptyValidator = val => val.trim().length > 0;
+
 const validate = (val, rules, connectedValue) => {
   let isValid = true;
   for (let rule in rules) {
@@ -23,6 +25,9 @@ const validate = (val, rules, connectedValue) => {
         break;
       case "equalTo":
         isValid = isValid && equalToValidator(val, connectedValue[rule]);
+        break;
+      case "notEmpty":
+        isValid = isValid && notEmptyValidator(val);
         break;
       default:
         isValid = isValid && true;

@@ -1,13 +1,14 @@
 import styled, { css } from "styled-components";
 
 const PasswordWrapper = styled.View`
-  ${({ portrait }) => {
-    if (portrait)
+  ${({ portrait, authMode }) => {
+    if (!portrait && authMode === "signUp") {
       return css`
-        width: 100%;
+        width: 48%;
       `;
+    }
     return css`
-      width: 48%;
+      width: 100%;
     `;
   }};
 `;

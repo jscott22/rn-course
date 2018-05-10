@@ -1,11 +1,12 @@
 import React from "react";
 import { TextInput } from "react-native";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const StyledInput = styled.TextInput`
   width: 100%;
-  border: 1px #eee;
-  background: white;
+  border-width: 1px;
+  border-color: ${({ invalid }) => (invalid ? "red" : "#eee")};
+  background-color: ${({ invalid }) => (invalid ? "#f9c0c0" : "white")};
   padding: 5px;
   margin: 8px 0;
 `;

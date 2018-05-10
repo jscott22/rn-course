@@ -2,10 +2,11 @@ import React, { Component } from "react";
 
 import DefaultInput from "../UI/DefaultInput";
 
-export default ({ value, onChangeText }) => (
+export default ({ placeData, handleChangeText }) => (
   <DefaultInput
     placeholder="Add place"
-    value={value}
-    onChangeText={onChangeText}
+    value={placeData.value}
+    invalid={!placeData.valid && placeData.touched}
+    handleChangeText={handleChangeText}
   />
 );

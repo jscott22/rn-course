@@ -13,19 +13,21 @@ const ButtonContent = styled.View`
   margin: 5px;
   border-radius: 5;
   border: 1px #aaa;
-  background-color: #eee;
+  background-color: ${({ disabled }) => (disabled ? "#fff" : "#eee")};
 `;
 
 const StyledText = styled.Text`
-  color: black;
+  color: ${({ disabled }) => (disabled ? "#aaa" : "black")};
 `;
 
 const ButtonWithBackground = props => {
   const content = (
-    <ButtonContent>
-      <StyledText>{props.children}</StyledText>
+    <ButtonContent disabled={props.disabled}>
+      <StyledText disabled={props.disabled}>{props.children}</StyledText>
     </ButtonContent>
   );
+
+  if (props.disabled) return content;
 
   if (Platform.OS === "android") {
     return (

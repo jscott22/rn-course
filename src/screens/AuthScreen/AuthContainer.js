@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const AuthContainer = styled.View`
+const AuthContainer = styled.KeyboardAvoidingView`
   flex: 1;
   justify-content: center;
   align-items: center;
