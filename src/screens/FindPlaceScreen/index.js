@@ -1,29 +1,14 @@
 import React, { PureComponent } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { connect } from "react-redux";
-import styled from "styled-components";
 
 import PlaceList from "../../components/PlaceList";
 
-const SearchButton = styled.View`
-  border-color: orange;
-  border-width: 3px;
-  padding: 20px;
-  border-radius: 50px;
-`;
-
-const SearchButtonText = styled.Text`
-  color: orange;
-  font-weight: bold;
-  font-size: 26px;
-`;
-
-const ButtonContainer = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-const ListContainer = styled.View``;
+import {
+  SearchButton,
+  SearchButtonText,
+  ButtonContainer
+} from "./SearchButton";
 
 class FindPlaceScreen extends PureComponent {
   state = {
@@ -70,12 +55,12 @@ class FindPlaceScreen extends PureComponent {
           opacity: this.state.placesAnim
         }}
       >
-        <ListContainer>
+        <View>
           <PlaceList
             places={this.props.places}
             onItemSelected={this.handleItemSelected}
           />
-        </ListContainer>
+        </View>
       </Animated.View>
     ) : (
       <ButtonContainer>

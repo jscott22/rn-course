@@ -13,7 +13,7 @@ export default (state = initialState, { type, payload }) => {
           key: Math.random().toString(),
           name: payload.placeName,
           location: payload.location,
-          image: require("../../assets/place.jpg")
+          image: payload.image
         })
       };
     case DELETE_PLACE:

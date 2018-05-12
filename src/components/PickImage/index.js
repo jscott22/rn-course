@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, Image, Button } from "react-native";
+import ImagePicker from "react-native-image-picker";
 import styled from "styled-components";
 
 import placeholderImage from "../../assets/place.jpg";
@@ -26,14 +27,36 @@ const PreviewImage = styled.Image`
 `;
 
 class PickImage extends PureComponent {
+  state = {
+    pickedImage: null
+  };
+
+  handleImagePicked = () => {
+    ImagePicker.showImagePicker({ title: "Pick an Image" }, res => {
+      if (res.didCancel) {
+        console.log("User cancelled!");
+      } else if (res.error) {
+        console.warn("Error:", res.error);
+      } else {
+        const pickedImage = { uri: res.uri };
+
+        this.setState({
+          pickedImage
+        });
+
+        this.props.onImagePicked(pickedImage);
+      }
+    });
+  };
+
   render() {
     return (
       <Container>
         <PlaceHolder>
-          <PreviewImage source={placeholderImage} />
+          <PreviewImage source={this.state.pickedImage} />
         </PlaceHolder>
         <ButtonContainer>
-          <Button title="Pick Image" onPress={() => "pick image"} />
+          <Button title="Pick Image" onPress={this.handleImagePicked} />
         </ButtonContainer>
       </Container>
     );

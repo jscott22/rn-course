@@ -46,6 +46,10 @@ class SharePlaceScreen extends PureComponent {
       location: {
         value: null,
         valid: false
+      },
+      image: {
+        value: null,
+        valid: false
       }
     }
   };
@@ -78,10 +82,23 @@ class SharePlaceScreen extends PureComponent {
     }));
   };
 
+  handleImagePicked = image => {
+    this.setState(prevState => ({
+      controls: {
+        ...prevState.controls,
+        image: {
+          value: image,
+          valid: true
+        }
+      }
+    }));
+  };
+
   handlePlaceSubmit = () => {
     this.props.addPlace({
       placeName: this.state.controls.placeName.value,
-      location: this.state.controls.location.value
+      location: this.state.controls.location.value,
+      image: this.state.controls.image.value
     });
   };
 
@@ -104,7 +121,7 @@ class SharePlaceScreen extends PureComponent {
           <MainText>
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
-          <PickImage />
+          <PickImage onImagePicked={this.handleImagePicked} />
           <PickLocation onLocationSelect={this.handleLocationSelect} />
           <PlaceInput
             placeData={this.state.controls.placeName}
@@ -115,7 +132,8 @@ class SharePlaceScreen extends PureComponent {
               onPress={this.handlePlaceSubmit}
               disabled={
                 !this.state.controls.placeName.valid ||
-                !this.state.controls.location.valid
+                !this.state.controls.location.valid ||
+                !this.state.controls.image.valid
               }
             >
               Share!
