@@ -1,63 +1,24 @@
 import React, { PureComponent } from "react";
 import {
-  Modal,
   View,
   Image,
-  Text,
-  Button,
   TouchableOpacity,
   Platform,
   Dimensions,
-  ScrollView,
   StyleSheet
 } from "react-native";
-import styled, { css } from "styled-components";
+import MapView from "react-native-maps";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import { connect } from "react-redux";
 
-import Icon from "react-native-vector-icons/Ionicons";
+import PlaceName from "./PlaceName";
+import PlaceImage from "./PlaceImage";
+import DeleteButton from "./DeleteButton";
+import SubContainer from "./SubContainer";
+import PlaceDetailWrapper from "./PlaceDetailWrapper";
 
 import { deletePlace } from "../../store/actions/places";
-
-const PlaceName = styled.Text`
-  font-weight: bold;
-  text-align: center;
-  font-size: 28px;
-`;
-
-const PlaceImage = styled.Image`
-  height: 200px;
-  width: 100%;
-`;
-
-const DetailContainer = styled.ScrollView.attrs({});
-
-const DeleteButton = styled.View`
-  align-items: center;
-`;
-
-const SubContainer = styled.View`
-  flex: 1;
-`;
-
-const PlaceDetailWrapper = styled.View`
-  ${({ portrait }) => {
-    if (portrait) {
-      return css`
-        flex-direction: column;
-        margin-top: 40px;
-        padding: 20px;
-        flex: 1;
-      `;
-    }
-    return css`
-      flex-direction: row;
-      margin-top: 40px;
-      padding: 20px;
-      flex: 1;
-    `;
-  }};
-`;
 
 class PlaceDetailScreen extends PureComponent {
   state = {
@@ -87,9 +48,24 @@ class PlaceDetailScreen extends PureComponent {
     const { selectedPlace, onRequestClosed } = this.props;
 
     return (
-      <PlaceDetailWrapper portrat={this.state.portrait}>
+      <PlaceDetailWrapper portrait={this.state.portrait}>
         <SubContainer>
           <PlaceImage source={selectedPlace.image} />
+        </SubContainer>
+        <SubContainer>
+          <MapView
+            initialRegion={{
+              ...this.props.selectedPlace.location,
+              latitudeDelta: 0.0122,
+              longitudeDelta:
+                Dimensions.get("window").width /
+                Dimensions.get("window").height *
+                0.0122
+            }}
+            style={styles.map}
+          >
+            <MapView.Marker coordinate={this.props.selectedPlace.location} />
+          </MapView>
         </SubContainer>
         <SubContainer>
           <View>
@@ -112,6 +88,12 @@ class PlaceDetailScreen extends PureComponent {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  map: {
+    ...StyleSheet.absoluteFillObject
+  }
+});
 
 const actions = {
   deletePlace

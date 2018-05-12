@@ -7,12 +7,12 @@ const initialState = {
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case ADD_PLACE:
-      console.log(payload);
       return {
         ...state,
         places: state.places.concat({
           key: Math.random().toString(),
-          name: payload,
+          name: payload.placeName,
+          location: payload.location,
           image: require("../../assets/place.jpg")
         })
       };

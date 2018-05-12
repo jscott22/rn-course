@@ -42,6 +42,10 @@ class SharePlaceScreen extends PureComponent {
         validationRules: {
           notEmpty: true
         }
+      },
+      location: {
+        value: null,
+        valid: false
       }
     }
   };
@@ -61,7 +65,6 @@ class SharePlaceScreen extends PureComponent {
   };
 
   handlePlaceNameChange = value => {
-    console.log(value);
     this.setState(prevState => ({
       controls: {
         ...prevState.controls,
@@ -76,14 +79,19 @@ class SharePlaceScreen extends PureComponent {
   };
 
   handlePlaceSubmit = () => {
-    this.props.addPlace(this.state.controls.placeName.value);
+    this.props.addPlace({
+      placeName: this.state.controls.placeName.value,
+      location: this.state.controls.location.value
+    });
+  };
+
+  handleLocationSelect = location => {
     this.setState(prevState => ({
       controls: {
-        placeName: {
-          ...prevState.controls.placeName,
-          value: "",
-          valid: false,
-          touched: false
+        ...prevState.controls,
+        location: {
+          value: location,
+          valid: true
         }
       }
     }));
@@ -97,7 +105,7 @@ class SharePlaceScreen extends PureComponent {
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
           <PickImage />
-          <PickLocation />
+          <PickLocation onLocationSelect={this.handleLocationSelect} />
           <PlaceInput
             placeData={this.state.controls.placeName}
             handleChangeText={this.handlePlaceNameChange}
@@ -105,7 +113,10 @@ class SharePlaceScreen extends PureComponent {
           <ButtonContainer>
             <ButtonWithBackground
               onPress={this.handlePlaceSubmit}
-              disabled={!this.state.controls.placeName.valid}
+              disabled={
+                !this.state.controls.placeName.valid ||
+                !this.state.controls.location.valid
+              }
             >
               Share!
             </ButtonWithBackground>

@@ -9,7 +9,6 @@ const StyledFlatList = styled.FlatList`
 `;
 
 export default ({ places, onItemSelected }) => {
-  console.log(JSON.stringify(places, null, 2));
   return (
     <StyledFlatList
       data={places}

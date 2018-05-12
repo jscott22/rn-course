@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, Text, Button, Dimensions } from "react-native";
 import MapView from "react-native-maps";
-// import styled from "styled-components";
 
 import ButtonContainer from "./ButtonContainer";
 import Placeholder from "./Placeholder";
@@ -24,7 +23,6 @@ class PickLocation extends PureComponent {
 
   pickLocation = event => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    console.log(this.map);
     this.map.animateToRegion({
       ...this.state.focusedLocation,
       latitude,
@@ -38,6 +36,10 @@ class PickLocation extends PureComponent {
       },
       locationChosen: true
     }));
+    this.props.onLocationSelect({
+      latitude,
+      longitude
+    });
   };
 
   getLocation = () => {

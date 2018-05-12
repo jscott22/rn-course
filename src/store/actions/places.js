@@ -1,10 +1,9 @@
 import { ADD_PLACE, DELETE_PLACE } from "../constants";
 
-export const addPlace = placeName => {
-  console.log(placeName);
+export const addPlace = placeInfo => {
   return {
     type: ADD_PLACE,
-    payload: placeName
+    payload: placeInfo
   };
 };
 
