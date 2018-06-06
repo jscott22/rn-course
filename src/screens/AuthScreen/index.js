@@ -6,14 +6,13 @@ import {
   ImageBackground,
   Dimensions,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ActivityIndicator
 } from "react-native";
 import styled, { css } from "styled-components";
 import { connect } from "react-redux";
 
 import { tryAuth } from "../../store/actions";
-
-import startMainTabs from "../MainTabs/startMainTabs";
 
 import DefaultInput from "../../components/UI/DefaultInput";
 import HeadingText from "../../components/UI/HeadingText";
@@ -93,8 +92,7 @@ class AuthScreen extends PureComponent {
       email: this.state.controls.email.value,
       password: this.state.controls.password.value
     };
-    this.props.tryAuth(authData);
-    startMainTabs();
+    this.props.tryAuth(authData, this.state.authMode);
   };
 
   updateInputState = (key, value) => {
@@ -190,18 +188,22 @@ class AuthScreen extends PureComponent {
                 ) : null}
               </PasswordContainer>
             </InputContainer>
-            <ButtonWithBackground
-              title="Submit"
-              onPress={this.loginHandler}
-              disabled={
-                !this.state.controls.email.valid ||
-                !this.state.controls.password.valid ||
-                (!this.state.controls.confirmPassword.valid &&
-                  this.state.authMode === "signUp")
-              }
-            >
-              Submit
-            </ButtonWithBackground>
+            {this.props.isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <ButtonWithBackground
+                title="Submit"
+                onPress={this.loginHandler}
+                disabled={
+                  !this.state.controls.email.valid ||
+                  !this.state.controls.password.valid ||
+                  (!this.state.controls.confirmPassword.valid &&
+                    this.state.authMode === "signUp")
+                }
+              >
+                Submit
+              </ButtonWithBackground>
+            )}
           </AuthContainer>
         </TouchableWithoutFeedback>
       </Background>
@@ -209,8 +211,15 @@ class AuthScreen extends PureComponent {
   }
 }
 
+const mapStateToProps = state => ({
+  isLoading: state.ui.isLoading
+});
+
 const actions = {
   tryAuth
 };
 
-export default connect(null, actions)(AuthScreen);
+export default connect(
+  mapStateToProps,
+  actions
+)(AuthScreen);

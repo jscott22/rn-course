@@ -1,4 +1,4 @@
-import { ADD_PLACE, DELETE_PLACE } from "../constants";
+import { SET_PLACES, REMOVE_PLACE } from "../constants";
 
 const initialState = {
   places: []
@@ -6,18 +6,14 @@ const initialState = {
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
-    case ADD_PLACE:
+    case SET_PLACES:
       return {
         ...state,
-        places: state.places.concat({
-          key: Math.random().toString(),
-          name: payload.placeName,
-          location: payload.location,
-          image: payload.image
-        })
+        places: payload
       };
-    case DELETE_PLACE:
+    case REMOVE_PLACE:
       return {
+        ...state,
         places: state.places.filter(place => place.key !== payload)
       };
     default:

@@ -2,6 +2,8 @@ import React, { PureComponent } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { connect } from "react-redux";
 
+import { getPlaces } from "../../store/actions";
+
 import PlaceList from "../../components/PlaceList";
 
 import {
@@ -16,6 +18,10 @@ class FindPlaceScreen extends PureComponent {
     removeAnim: new Animated.Value(1),
     placesAnim: new Animated.Value(0)
   };
+
+  componentDidMount() {
+    this.props.getPlaces();
+  }
 
   handleItemSelected = key => {
     const selectedPlace = this.props.places.find(place => place.key === key);
@@ -90,4 +96,7 @@ class FindPlaceScreen extends PureComponent {
 
 const mapStateToProps = ({ places: { places } }) => ({ places });
 
-export default connect(mapStateToProps)(FindPlaceScreen);
+export default connect(
+  mapStateToProps,
+  { getPlaces }
+)(FindPlaceScreen);

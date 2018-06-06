@@ -8,6 +8,10 @@ import FindPlaceScreen from "./src/screens/FindPlaceScreen";
 import PlaceDetailScreen from "./src/screens/PlaceDetailScreen";
 import SideDrawer from "./src/screens/SideDrawer";
 
+import "./firebase";
+
+console.disableYellowBox = true;
+
 //Register Screens
 Navigation.registerComponent(
   "awesome-places.AuthScreen",

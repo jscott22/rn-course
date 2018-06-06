@@ -1,5 +1,13 @@
 import React, { PureComponent } from "react";
-import { View, Text, Button, TextInput, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  ScrollView,
+  Image,
+  ActivityIndicator
+} from "react-native";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
@@ -127,18 +135,24 @@ class SharePlaceScreen extends PureComponent {
             placeData={this.state.controls.placeName}
             handleChangeText={this.handlePlaceNameChange}
           />
-          <ButtonContainer>
-            <ButtonWithBackground
-              onPress={this.handlePlaceSubmit}
-              disabled={
-                !this.state.controls.placeName.valid ||
-                !this.state.controls.location.valid ||
-                !this.state.controls.image.valid
-              }
-            >
-              Share!
-            </ButtonWithBackground>
-          </ButtonContainer>
+          {this.props.isLoading ? (
+            <ButtonContainer>
+              <ActivityIndicator />
+            </ButtonContainer>
+          ) : (
+            <ButtonContainer>
+              <ButtonWithBackground
+                onPress={this.handlePlaceSubmit}
+                disabled={
+                  !this.state.controls.placeName.valid ||
+                  !this.state.controls.location.valid ||
+                  !this.state.controls.image.valid
+                }
+              >
+                Share!
+              </ButtonWithBackground>
+            </ButtonContainer>
+          )}
         </Container>
       </ScrollView>
     );
@@ -149,4 +163,11 @@ const actions = {
   addPlace
 };
 
-export default connect(null, actions)(SharePlaceScreen);
+const mapStateToProps = state => ({
+  isLoading: state.ui.isLoading
+});
+
+export default connect(
+  mapStateToProps,
+  actions
+)(SharePlaceScreen);

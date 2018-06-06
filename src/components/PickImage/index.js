@@ -38,13 +38,11 @@ class PickImage extends PureComponent {
       } else if (res.error) {
         console.warn("Error:", res.error);
       } else {
-        const pickedImage = { uri: res.uri };
-
         this.setState({
-          pickedImage
+          pickedImage: { uri: res.uri }
         });
 
-        this.props.onImagePicked(pickedImage);
+        this.props.onImagePicked({ uri: res.uri, base64: res.data });
       }
     });
   };
